@@ -1,4 +1,4 @@
-This are the grammar rules but with actually consistent formatting
+These are the grammar rules but with actually consistent formatting
 because garrido might be a dinosaur.
 
 
