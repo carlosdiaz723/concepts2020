@@ -1,0 +1,19 @@
+white_space       [ \t]
+sign              [+-]?
+digit             [0-9]
+alpha             [A-Za-z]
+alpha_num         ({alpha}|{digit}|_)
+hex_digit         [0-9A-F]
+
+wordiden          ((_?{alpha}+({alpha_num}*\.{alpha_num}+)*)
+   |(_?{alpha}+({alpha_num}*"->"{alpha_num}+)*))
+unsigned_integer  {digit}+
+sinteger          {sign}{digit}+
+hex_integer       (0{hex_digit}+h)
+exponent          e[+-]?{digit}+
+i                 {unsigned_integer}
+real              ({i}\.{i}?|{i}?\.{i}){exponent}?
+sreal             {sign}{real}
+bad_string        \"([^"\n]|\"\")+
+schar             \'{alpha_num}\'
+string            \"[^"\n]*["\n]
