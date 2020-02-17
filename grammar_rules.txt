@@ -1,250 +1,113 @@
-These are the grammar rules but with actually consistent formatting
-because garrido might be a dinosaur.
-
-
-
-func_main -> FUNCTION IDENTIFIER oper_type 
-    | MAIN 
-
-oper_type -> RETURN chk_ptr chk_array ret_type 
-
-chk_ptr -> POINTER OF
-
-chk_array -> [empty]
-    | ARRAY array_dim_list
-
-array_dim_list -> LB array_index RB 
-    | array_dim_list LB array_index RB
-
-array_index -> IDENTIFIER
-    | ICON
-
-ret_type -> TYPE type_name
-    | STRUCT IDENTIFIER
-    | STRUCTYPE IDENTIFIER
-
-type_name -> MVOID
-    | INTEGER
-    | SHORT
-    | REAL
-    | FLOAT
-    | DOUBLE
-    | TBOOL
-    | CHAR
-    | TSTRING OF LENGTH ICON
-    | TBYTE
-
-struct_enum -> STRUCT
-    | ENUM
-
-specifications -> SPECIFICATIONS spec_list
-
-spec_list -> spec_def
-    | spec_list spec_def
-
-spec_def -> ENUM
-    | STRUCT
-    | DESCRIPTION
-
-globals -> GLOBAL DECLARATIONS const_dec var_dec struct_dec
-
-const_var_struct -> const_dec var_dec struct_dec
-
-const_dec -> CONSTANTS data_declarations
-
-var_dec -> VARIABLES data_declarations
-
-struct_dec -> STRUCT data_declarations
-
-data_declarations -> comp_declare
-    | data_declarations comp_declare
-
-comp_declare -> DEFINE data_file
-
-data_file -> sel_file
-    | sel_dmode data_declaration
-
-data_declaration -> IDENTIFIER parray_dec OF data_type 
-
-data_type -> TUNSIGNED
-    | CHAR 
-    | INTEGER
-    | MVOID
-    | DOUBLE
-    | LONG
-    | SHORT
-    | FLOAT
-    | REAL
-    | TSTRING
-    | TBOOL
-    | TBYTE
-
-parray_dec ->
-    | ARRAY plist_const popt_array_val
-    | LB
-    | VALUE
-    | EQUOP
-
-plist_const -> LB iconst_ident RB
-    | plist_const LB iconst_ident RB
-
-iconst_ident -> ICON
-    | IDENTIFIER
-
-popt_array_val ->
-    | value_eq array_val
-
-value_eq -> VALUE
-    | EQUOP
-
-array_val -> simp_arr_val
-
-simp_arr_val -> LB arg_list RB
-
-arg_list -> expr
-    | arg_list COMMA expr
-
-implement -> IMPLEMENTATIONS main_head funct_list
-
-main_head -> MAIN DESCRIPTION parameters
-
-funct_list -> funct_body
-    | funct_list funct_body
-
-funct_body -> FUNCTION phead_fun pother_oper_def
-
-pother_oper_def -> pother_oper IS const_var_struct precond BEGIN pactions ENDFUN IDENTIFIER
-
-pother_oper -> acc_mut IDENTIFIER DESCRIPTION oper_type parameters
-
-precond -> PRECONDITION pcondition
-
-pcondition -> pcond1 OR pcond1
-    | pcond1 AND pcond1
-    | pcond1
-
-pcond1 -> NOT pcond2
-    | pcond2
-
-pcond2 -> LP pcondition RP
-    | expr RELOP expr
-    | expr EQOP expr
-    | expr eq_v expr
-    | expr opt_not true_false
-    | element
-
-true_false -> MTRUE
-    | MFALSE
-
-eq_v -> EQUALS
-    | GREATER THAN
-    | LESS THAN
-    | GREATER OR EQUAL
-    | LESS OR EQUAL
-
-opt_not -> NOT
-
-parameters -> PARAMETERS param_list
-
-param_list -> param_def
-    | param_list COMMA param_def
-
-param_def -> data_declaration
-
-expr -> term PLUS term
-    | term MINUS term
-    | term BAND term
-    | term BOR term
-    | term BXOR term
-
-term -> punary
-    | punary STAR punary
-    | punary DIVOP punary
-    | punary MOD punary
-    | punary LSHIFT punary
-    | punary RSHIFT punary
-
-punary -> element
-    | MINUS element
-    | NEGATE element
-
-element -> IDENTIFIER popt_ref
-    | STRING
-    | LETTER
-    | ICON
-    | HCON
-    | FCON
-    | MTRUE
-    | MFALSE
-    | LP expr RP
-pactions -> action_def
-    | pactions action_def
-
-action_def -> SET name_ref EQUOP exp
-    | READ pvar_value_list
-    | INPUT name_ref
-    | DISPLAY pvar_value_list
-    | DISPLAYN pvar_value_list
-    | MCLOSE IDENTIFIER
-    | MOPEN in_out
-    | MFILE read_write
-    | INCREMENT name_ref
-    | DECREMENT name_ref
-    | RETURN expr
-    | CALL name_ref pusing_ref
-    | IF pcondition THEN pactions ptest_elsif opt_else ENDIF
-    | FOR name_ref EQUOP expr downto expr DO pactions ENDFOR
-    | REPEAT pactions UNTIL pcondition ENDREPEAT
-    | WHILE pcondition DO pactions ENDWHILE
-    | CASE name_ref pcase_val pcase_def MENDCASE
-    | MBREAK
-    | MEXIT
-    | ENDFUN name_ref
-    | POTCONDITION pcondition
-
-ptest_elsif -> proc_elseif
-
-proc_elseif -> ELSEIF pcondition THEN pactions
-    | proc_elseif ELSEIF pcondition THEN pactions
-
-downto -> TO
-    | DOWNTO
-
-pusing_ref ->
-    | USING arg_list
-    | parguments
-
-parguments -> LP arg_list RP
-
-pcase_val -> MWHEN expr COLON pactions
-    | pcase_val MWHEN expr COLON pactions
-
-pcase_def -> DEFAULT COLON pactions
-
-pvar_value_list -> expr
-    | pvar_value_list COMMA expr
-
-opt_else -> ELSE pactions
-
-in_out -> INPUT MFILE IDENTIFIER
-    | OUTPUT MFILE IDENTIFIER
-
-read_write -> READ pvar_value_list FROM IDENTIFIER
-    | WRITE pvar_value_list TO IDENTIFIER
-
-name_ref -> IDENTIFIER opt_ref pmember_opt popt_dot
-
-pmember_opt -> pmember_of
-
-pmember_of -> OF IDENTIFIER opt_ref
-    | pmember_of OF IDENTIFIER opt_ref
-
-opt_ref -> array_val
-
-popt_ref -> array_val
-    | parguments
-
-popt_dot -> proc_dot
-
-proc_dot -> DOT IDENTIFIER opt_ref
-    | proc_dot DOT IDENTIFIER opt_ref
+"Name"    = 'BASIC (Beginners All-purpose Symbolic Instruction Code)'
+"Author"  = 'John G. Kemeny and Thomas E. Kurtz' 
+"Version" = '1964 - Original - before Microsoft enhanced the language for the IBM PC.'
+
+"Case Sensitive" = False 
+"Start Symbol"   = <Lines>
+
+{String Chars} = {Printable} - ["]
+{WS}           = {Whitespace} - {CR} - {LF}
+
+NewLine        = {CR}{LF}|{CR}
+Whitespace     = {WS}+
+
+Remark         = REM{Space}{Printable}*
+ID             = {Letter}[$%]? 
+String         = '"'{String Chars}*'"' 
+Integer        = {digit}+ 
+Real           = {digit}+.{digit}+ 
+
+<Lines>       ::= Integer <Statements> NewLine <Lines> 
+                | Integer <Statements> NewLine
+
+<Statements>  ::= <Statement> ':' <Statements>
+                | <Statement>
+
+<Statement>   ::= CLOSE '#' Integer
+                | DATA <Constant List> 
+                | DIM ID '(' <Integer List> ')'
+                | END          
+                | FOR ID '=' <Expression> TO <Expression>     
+                | FOR ID '=' <Expression> TO <Expression> STEP Integer      
+                | GOTO <Expression> 
+                | GOSUB <Expression> 
+                | IF <Expression> THEN <Statement>         
+                | INPUT <ID List>       
+                | INPUT '#' Integer ',' <ID List>       
+                | LET Id '=' <Expression> 
+                | NEXT <ID List>               
+                | OPEN <Value> FOR <Access> AS '#' Integer
+                | POKE <Value List>
+                | PRINT <Print list>
+                | PRINT '#' Integer ',' <Print List>
+                | READ <ID List>           
+                | RETURN
+                | RESTORE
+                | RUN
+                | STOP
+                | SYS <Value>
+                | WAIT <Value List>
+                | Remark
+
+<Access>   ::= INPUT
+             | OUPUT
+                   
+<ID List>  ::= ID ',' <ID List> 
+             | ID 
+
+<Value List>      ::= <Value> ',' <Value List> 
+                    | <Value> 
+
+<Constant List>   ::= <Constant> ',' <Constant List> 
+                    | <Constant> 
+
+<Integer List>    ::= Integer ',' <Integer List>
+                    | Integer
+                 
+<Expression List> ::= <Expression> ',' <Expression List> 
+                    | <Expression> 
+
+<Print List>      ::= <Expression> ';' <Print List>
+                    | <Expression> 
+                    |  
+
+<Expression>  ::= <And Exp> OR <Expression> 
+                | <And Exp> 
+
+<And Exp>     ::= <Not Exp> AND <And Exp> 
+                | <Not Exp> 
+ 
+<Not Exp>     ::= NOT <Compare Exp> 
+                | <Compare Exp> 
+
+<Compare Exp> ::= <Add Exp> '='  <Compare Exp> 
+                | <Add Exp> '<>' <Compare Exp> 
+                | <Add Exp> '><' <Compare Exp> 
+                | <Add Exp> '>'  <Compare Exp> 
+                | <Add Exp> '>=' <Compare Exp> 
+                | <Add Exp> '<'  <Compare Exp> 
+                | <Add Exp> '<=' <Compare Exp> 
+                | <Add Exp> 
+
+<Add Exp>     ::= <Mult Exp> '+' <Add Exp> 
+                | <Mult Exp> '-' <Add Exp> 
+                | <Mult Exp> 
+
+<Mult Exp>    ::= <Negate Exp> '*' <Mult Exp> 
+                | <Negate Exp> '/' <Mult Exp> 
+                | <Negate Exp> 
+
+<Negate Exp>  ::= '-' <Power Exp> 
+                | <Power Exp> 
+
+<Power Exp>   ::= <Power Exp> '^' <Value> 
+                | <Value> 
+
+<Value>       ::= '(' <Expression> ')'
+                | ID 
+                | ID '(' <Expression List> ')'
+                | <Constant> 
+
+<Constant> ::= Integer 
+             | String 
+             | Real 

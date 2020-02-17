@@ -1,6 +1,4 @@
-from pprint import pprint as pretty
-# using this to print lists in a prettier format
-
+# BASIC VERSION
 '''
 basic Scanner logic:
     -' ' is seperator (space or tab)                [DONE]
@@ -43,13 +41,13 @@ we might run into problems later.
 '''
 doubleSymbols = ['..', ':=']
 
-# KEYWORDS houses all possible special seperators (hopefully, i dont know SCL)
+# KEYWORDS houses all possible special seperators (hopefully, don't know BASIC)
 KEYWORDS = symbols + doubleSymbols
 
 
 def scan(string: str):
     '''
-    Input: a string containing the text for an SCL program
+    Input: a string containing the text for a BASIC program
     Output: a list of lexemes scanned from the given text
     '''
     lexeme = ''
