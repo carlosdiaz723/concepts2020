@@ -1,4 +1,3 @@
-
 keywords = {'remark': 'REM',
             'newLine': '<newline>',
             'colon': ':',
@@ -7,6 +6,7 @@ keywords = {'remark': 'REM',
             'comma': ',',
             'semicolon': ';',
             'greaterThan': '>',
+            'forloop': 'FOR',
             'lessThan': '<',
             'multiplication': '\*',
             'plus': '\+',

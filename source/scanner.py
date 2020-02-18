@@ -1,13 +1,3 @@
-# BASIC VERSION
-'''
-basic Scanner logic:
-    -' ' is seperator (space or tab)                [DONE]
-    -certain symbols are also seperators            [DONE]
-    -scan each instance between ' ' or a seperator  [DONE]
-congrats, you have all the lexemes
-'''
-
-
 def isAnInteger(input: str):
     '''
     shorthand for testing if a string could be a valid integer

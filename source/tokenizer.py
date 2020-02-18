@@ -1,12 +1,7 @@
 from scanner import scan
 import re
 import lexicalRules
-# BASIC VERSION
-'''
-now, tokenize
-    -scan each lexeme
-    -determine token
-'''
+
 
 with open('./../example.txt', 'r') as exampleFile:
     ex1 = exampleFile.read()
@@ -28,12 +23,12 @@ we might run into problems later.
 doubleSymbols = ['..', ':=']
 
 
-# KEYWORDS houses all possible special seperators (hopefully, don't know BASIC)
-KEYWORDS = symbols + doubleSymbols
+# SEPARATORS houses all possible special seperators
+SEPARATORS = symbols + doubleSymbols
 
 
 # print it out, optional but cool to see for now
-lexemes = scan(ex1, KEYWORDS, doubleSymbols)
+lexemes = scan(ex1, SEPARATORS, doubleSymbols)
 
 keywordFound = False
 
