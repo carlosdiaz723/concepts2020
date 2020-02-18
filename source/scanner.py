@@ -1,16 +1,10 @@
-from pprint import pprint as pretty
-# using this to print lists in a prettier format
-
+# BASIC VERSION
 '''
 basic Scanner logic:
     -' ' is seperator (space or tab)                [DONE]
     -certain symbols are also seperators            [DONE]
     -scan each instance between ' ' or a seperator  [DONE]
 congrats, you have all the lexemes
-now, tokenize
-    -scan each lexeme
-    -determine token
-
 '''
 
 
@@ -25,31 +19,9 @@ def isAnInteger(input: str):
         return False
 
 
-ex1 = ""
-with open('./../example.txt', 'r') as exampleFile:
-    ex1 = exampleFile.read()
-'''
-list of symbols that are seperators, just like whitespace.
-they'll all be lexemes except sometimes '.' will be inside of a float.
-'''
-symbols = ['{', '}', '(', ')', '[', ']', '.', '"', '*', '\n', ':', ',', ';',
-           '+', '-', ]
-
-
-'''
-special cases where a keyword is two symbols and might be accidentally
-scanned as two different lexemes. I've tried to code out this possibility but
-we might run into problems later.
-'''
-doubleSymbols = ['..', ':=']
-
-# KEYWORDS houses all possible special seperators (hopefully, i dont know SCL)
-KEYWORDS = symbols + doubleSymbols
-
-
-def scan(string: str):
+def scan(string: str, keywords=[], doubleSymbols=[]):
     '''
-    Input: a string containing the text for an SCL program
+    Input: a string containing the text for a BASIC program
     Output: a list of lexemes scanned from the given text
     '''
     lexeme = ''
@@ -63,8 +35,8 @@ def scan(string: str):
             if character != ' ':
                 lexeme += character
             if (index + 1 < len(string)):
-                if string[index + 1] == ' ' or string[index + 1] in KEYWORDS\
-                  or lexeme in KEYWORDS:
+                if string[index + 1] == ' ' or string[index + 1] in keywords\
+                  or lexeme in keywords:
                     if (lexeme + string[index + 1]) in doubleSymbols:
                         # the special double case
                         lexeme = lexeme + string[index + 1]
@@ -81,8 +53,3 @@ def scan(string: str):
             # remove restriction so only one loop is skipped on double case
             doubleFound = False
     return listOfLexemes
-
-
-# print it out, optional but cool to see for now
-for index, lex in enumerate(scan(ex1)):
-    print('Lexeme ', (index + 1), ':  ', lex, sep='')
