@@ -1,5 +1,5 @@
 05 HOME : TEXT : REM Fibonacci numbers 
-10 LET MAX = 5000
+10 LET MAX = 5000.654
 20 LET X = 1 : LET Y = 1
 30 IF (X > MAX) GOTO 100
 40 PRINT X

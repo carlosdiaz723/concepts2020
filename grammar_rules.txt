@@ -4,7 +4,6 @@
 
 "Case Sensitive" = False 
 "Start Symbol"   = <Lines>
-
 {String Chars} = {Printable} - ["]
 {WS}           = {Whitespace} - {CR} - {LF}
 
