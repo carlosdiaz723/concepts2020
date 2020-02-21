@@ -1,9 +1,10 @@
 # To-do
 
-### FEB 17
+### FEB 24
 - Scanner
-  - Develop a complete scanner for the SCL language
-
+  - [DONE] Develop a complete scanner for the SCL language
+  - Investigate and solve why scanner is ignoring last lexeme 
+  - Write report
 
 ### MAR 16
 - Parser + `Scanner`

@@ -38,6 +38,7 @@ def scan(string: str, keywords=[], doubleSymbols=[]):
                     elif lexeme != '':
                         # add to list
                         listOfLexemes.append(lexeme.replace('\n', '<newline>'))
+                        print(lexeme)
                         lexeme = ''
         else:
             # remove restriction so only one loop is skipped on double case
