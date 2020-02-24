@@ -1,0 +1,67 @@
+"Name"    = 'BASIC (Beginners All-purpose Symbolic Instruction Code)'
+"Author"  = 'Carlos Diaz' 
+"Version" = '2020 - SubGrammar for the purpose of simplifying a school project.'
+
+
+<Lines>       ::= Integer <Statements> NewLine <Lines> 
+                | Integer <Statements> NewLine
+
+<Statements>  ::= <Statement> ':' <Statements>
+                | <Statement>
+
+<Statement>   ::= CLOSE '#' Integer
+                | END            
+                | GOTO <Expression> 
+                | IF <Expression> THEN <Statement>  
+                | LET Id '=' <Expression> 
+                | PRINT <Print list>
+                | PRINT '#' Integer ',' <Print List>
+                | Remark
+
+                 
+<Expression List> ::= <Expression> ',' <Expression List> 
+                    | <Expression> 
+
+<Print List>      ::= <Expression> ';' <Print List>
+                    | <Expression> 
+
+<Expression>  ::= <And Exp> OR <Expression> 
+                | <And Exp> 
+
+<And Exp>     ::= <Not Exp> AND <And Exp> 
+                | <Not Exp> 
+ 
+<Not Exp>     ::= NOT <Compare Exp> 
+                | <Compare Exp> 
+
+<Compare Exp> ::= <Add Exp> '='  <Compare Exp> 
+                | <Add Exp> '<>' <Compare Exp> 
+                | <Add Exp> '><' <Compare Exp> 
+                | <Add Exp> '>'  <Compare Exp> 
+                | <Add Exp> '>=' <Compare Exp> 
+                | <Add Exp> '<'  <Compare Exp> 
+                | <Add Exp> '<=' <Compare Exp> 
+                | <Add Exp> 
+
+<Add Exp>     ::= <Mult Exp> '+' <Add Exp> 
+                | <Mult Exp> '-' <Add Exp> 
+                | <Mult Exp> 
+
+<Mult Exp>    ::= <Negate Exp> '*' <Mult Exp> 
+                | <Negate Exp> '/' <Mult Exp> 
+                | <Negate Exp> 
+
+<Negate Exp>  ::= '-' <Power Exp> 
+                | <Power Exp> 
+
+<Power Exp>   ::= <Power Exp> '^' <Value> 
+                | <Value> 
+
+<Value>       ::= '(' <Expression> ')'
+                | ID 
+                | ID '(' <Expression List> ')'
+                | <Constant> 
+
+<Constant> ::= Integer 
+             | String 
+             | Real 
