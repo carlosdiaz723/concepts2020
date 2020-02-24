@@ -24,6 +24,9 @@ def scan(string: str, keywords=[], doubleSymbols=[]):
         if not doubleFound:
             if character != ' ':
                 lexeme += character
+            if index + 1 == len(string):
+                listOfLexemes.append(lexeme)
+                return listOfLexemes
             if (index + 1 < len(string)):
                 if string[index + 1] == ' ' or string[index + 1] in keywords\
                   or lexeme in keywords:
@@ -38,7 +41,6 @@ def scan(string: str, keywords=[], doubleSymbols=[]):
                     elif lexeme != '':
                         # add to list
                         listOfLexemes.append(lexeme.replace('\n', '<newline>'))
-                        print(lexeme)
                         lexeme = ''
         else:
             # remove restriction so only one loop is skipped on double case
