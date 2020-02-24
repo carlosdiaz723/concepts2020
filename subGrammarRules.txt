@@ -9,14 +9,14 @@
 <Statements>  ::= <Statement> ':' <Statements>
                 | <Statement>
 
-<Statement>   ::= CLOSE '#' Integer
-                | END            
+<Statement>   ::= END            
                 | GOTO <Expression> 
                 | IF <Expression> THEN <Statement>  
                 | LET Id '=' <Expression> 
                 | PRINT <Print list>
                 | PRINT '#' Integer ',' <Print List>
                 | Remark
+                | <Expression>
 
                  
 <Expression List> ::= <Expression> ',' <Expression List> 
