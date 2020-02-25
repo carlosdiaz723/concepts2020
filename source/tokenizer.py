@@ -27,7 +27,7 @@ import re
 import lexicalRules
 
 # open example file as a string
-with open('example.txt', 'r') as exampleFile:
+with open('example.bas', 'r') as exampleFile:
     ex1 = exampleFile.read()
 
 # gather list of lexemes from scanner.py
