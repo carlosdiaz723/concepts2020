@@ -35,6 +35,7 @@ lexemes = scan(ex1)
 
 # bool used to short circuit to reduce redundant searching
 keywordFound = False
+literalFound = False
 
 # loop through each lexeme and keep track of index
 for index, lex in enumerate(lexemes):
@@ -56,5 +57,12 @@ for index, lex in enumerate(lexemes):
             if y is not None:
                 print('Lexeme {}: {}'.format(index + 1, lex).ljust(25) +
                       'Token: {}'.format(key))
+                literalFound = True
                 # break if found, skip to next lexeme
                 break
+        if not literalFound:
+            # this will only execute if no possible matches were found
+            print('Lexeme {}: {}'.format(index + 1, lex).ljust(25) +
+                  'ERROR: illegal lexeme')
+            # reset flag
+            literalFound = True
