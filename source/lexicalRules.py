@@ -34,7 +34,7 @@ keywords = {'remark': r'(?i)^REM$',
             'assignment': r'^=$',
             'comma': r'^,$',
             'semicolon': r'^;$',
-            'greaterThan': r'^>$',
+            'greaterT': r'^>$',
             'lessThan': r'^<$',
             'multiplication': r'^\*$',
             'plus': r'^\+$',
@@ -46,8 +46,8 @@ keywords = {'remark': r'(?i)^REM$',
             'end': r'(?i)^END$',
             'print': r'(?i)^PRINT$',
             'instantiation': r'(?i)^LET$',
-            'openParens': r'^\($',
-            'closeParens': r'^\)$'
+            'openParen': r'^\($',
+            'closeParen': r'^\)$'
             }
 
 literals = {'integer': r'^[+-]?(\d)*$',

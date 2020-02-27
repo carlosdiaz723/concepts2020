@@ -46,8 +46,8 @@ for index, lex in enumerate(lexemes):
         # attempt to match lex with a keyword
         x = re.search(lexicalRules.keywords[key], lex)
         if x is not None:
-            print('Lexeme {}: {}'.format(index + 1, lex).ljust(25) +
-                  'Token: Keyword:    {}'.format(key))
+            print('Lexeme {}: {}'.format(index + 1, lex).ljust(21) +
+                  'Token:Keyword:    {}'.format(key))
             keywordFound = True
             errorCount = 0
             # break if found, skip to next lexeme
@@ -57,8 +57,8 @@ for index, lex in enumerate(lexemes):
         for key in lexicalRules.literals:
             y = re.search(lexicalRules.literals[key], lex)
             if y is not None:
-                print('Lexeme {}: {}'.format(index + 1, lex).ljust(25) +
-                      'Token: Identifier: {}'.format(key))
+                print('Lexeme {}: {}'.format(index + 1, lex).ljust(21) +
+                      'Token:Identifier: {}'.format(key))
                 errorCount = 0
                 literalFound = True
                 # break if found, skip to next lexeme
@@ -66,7 +66,7 @@ for index, lex in enumerate(lexemes):
     errorCount += 1
     if errorCount > 1:
         # this will only execute if no possible matches were found
-        print('Lexeme {}: {}'.format(index + 1, lex).ljust(25) +
+        print('Lexeme {}: {}'.format(index + 1, lex).ljust(21) +
               'ERROR: ILLEGAL LEXEME')
         # reset flag
         literalFound = False
