@@ -28,30 +28,30 @@ Note: Escape character '\' used for regular expression matching purposes. This
       when using RegEx.
 '''
 
-keywords = {'remark': r'REM',
-            'newLine': r'<newline>',
-            'colon': r':',
-            'assignment': r'=',
-            'comma': r',',
-            'semicolon': r';',
-            'greaterThan': r'>',
-            'lessThan': r'<',
-            'multiplication': r'\*',
-            'plus': r'\+',
-            'minus': r'-',
-            'or': r'OR',
-            'and': r'AND',
-            'goTo': r'GOTO',
-            'if': r'IF',
-            'end': r'END',
-            'print': r'PRINT',
-            'instantiation': r'LET',
-            'openParens': r'\(',
-            'closeParens': r'\)'
+keywords = {'remark': r'(?i)^REM$',
+            'newLine': r'^<newline>$',
+            'colon': r'^:$',
+            'assignment': r'^=$',
+            'comma': r'^,$',
+            'semicolon': r'^;$',
+            'greaterThan': r'^>$',
+            'lessThan': r'^<$',
+            'multiplication': r'^\*$',
+            'plus': r'^\+$',
+            'minus': r'^-$',
+            'or': r'(?i)^OR$',
+            'and': r'(?i)^AND$',
+            'goTo': r'(?i)^GOTO$',
+            'if': r'(?i)^IF$',
+            'end': r'(?i)^END$',
+            'print': r'(?i)^PRINT$',
+            'instantiation': r'(?i)^LET$',
+            'openParens': r'^\($',
+            'closeParens': r'^\)$'
             }
 
 literals = {'integer': r'^[+-]?(\d)*$',
-            'real': r'[-+]?[0-9]*\.?[0-9]+',
+            # 'real': r'[-+]?[0-9]*\.?[0-9]+',
             'string': r'\"(\w)*\"',
-            'printable/id': r'(\w)*'
+            'printable': r'^([A-Za-z])([A-Za-z0-9])*$'
             }

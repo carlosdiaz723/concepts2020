@@ -2,6 +2,36 @@
 "Author"  = 'Carlos Diaz' 
 "Version" = '2020 - SubGrammar for the purpose of simplifying a school project.'
 
+LEXICAL RULES AS REGULAR EXPRESSIONS
+
+KEYWORDS:
+    remark: (?i)^REM$
+    newLine: ^<newline>$
+    colon: ^:$
+    assignment: ^=$
+    comma: ^,$
+    semicolon: ^;$
+    greaterThan: ^>$
+    lessThan: ^<$
+    multiplication: ^*$
+    plus: ^+$
+    minus: ^-$
+    or: (?i)^OR$
+    and: (?i)^AND$
+    goTo: (?i)^GOTO$
+    if: (?i)^IF$
+    end: (?i)^END$
+    print: (?i)^PRINT$
+    instantiation: (?i)^LET$
+    openParens: ^($
+    closeParens: ^)$
+            
+IDENTIFIERS/LITERALS:
+    integer: ^[+-]?(\d)*$
+    string: \"(\w)*\"
+    printable: ^([A-Za-z])([A-Za-z0-9])*$
+            
+
 
 <Lines>       ::= Integer <Statements> NewLine <Lines> 
                 | Integer <Statements> NewLine
