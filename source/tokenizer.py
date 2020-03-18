@@ -23,20 +23,30 @@ This is where the list of lexemes is tokenized and printed.
 Note: All python files are pep8/pycodestyle compliant.
 '''
 from scanner import scan
+from pprint import pprint as pretty
 import re
 import lexicalRules
+
 
 # open example file as a string
 with open('example.bas', 'r') as exampleFile:
     ex1 = exampleFile.read()
 
+
 # gather list of lexemes from scanner.py
 lexemes = scan(ex1)
+
 
 # bool used to short circuit to reduce redundant searching
 keywordFound = False
 literalFound = False
 errorCount = 0
+
+
+# list of tuplles, tuples in form of:
+# (validity(true/false), lexemeNumber, lexeme, tokenType(id/keyword), token)
+listOfTokens = list(tuple())
+
 
 # loop through each lexeme and keep track of index
 for index, lex in enumerate(lexemes):
@@ -46,8 +56,9 @@ for index, lex in enumerate(lexemes):
         # attempt to match lex with a keyword
         x = re.search(lexicalRules.keywords[key], lex)
         if x is not None:
-            print('Lexeme {}: {}'.format(index + 1, lex).ljust(21) +
+            print('Lexeme {}: {}'.format(index, lex).ljust(21) +
                   'Token:Keyword:    {}'.format(key))
+            listOfTokens.append((True, index, lex, 'keyword', key))
             keywordFound = True
             errorCount = 0
             # break if found, skip to next lexeme
@@ -57,8 +68,9 @@ for index, lex in enumerate(lexemes):
         for key in lexicalRules.literals:
             y = re.search(lexicalRules.literals[key], lex)
             if y is not None:
-                print('Lexeme {}: {}'.format(index + 1, lex).ljust(21) +
+                print('Lexeme {}: {}'.format(index, lex).ljust(21) +
                       'Token:Identifier: {}'.format(key))
+                listOfTokens.append((True, index, lex, 'identifier', key))
                 errorCount = 0
                 literalFound = True
                 # break if found, skip to next lexeme
@@ -66,7 +78,41 @@ for index, lex in enumerate(lexemes):
     errorCount += 1
     if errorCount > 1:
         # this will only execute if no possible matches were found
-        print('Lexeme {}: {}'.format(index + 1, lex).ljust(21) +
+        print('Lexeme {}: {}'.format(index, lex).ljust(21) +
               'ERROR: ILLEGAL LEXEME')
+        listOfTokens.append((False, index, lex, None, None))
         # reset flag
         literalFound = False
+
+
+def getAllTokens():
+    '''
+    Will return the entire list of tuples containing information about each
+    lexeme/token.
+
+    Each tuple is of form:
+    (validity(true/false), lexemeNumber, lexeme, tokenType(id/keyword), token)
+
+    Example:
+    (True, 2, 'if', 'keyword', 'IF')
+
+    Invalid tokens are of form:
+    (False, lexemeNumber, lexeme, None, None)
+    '''
+    return listOfTokens
+
+
+def getToken(n: int):
+    '''
+    Teturns the nth tuple in the list.
+
+    Each tuple is of form:
+    (validity(true/false), lexemeNumber, lexeme, tokenType(id/keyword), token)
+
+    Example:
+    (True, 2, 'if', 'keyword', 'IF')
+
+    Invalid tokens are of form:
+    (False, lexemeNumber, lexeme, None, None)
+    '''
+    return listOfTokens[n]
