@@ -4,11 +4,13 @@
 - Scanner
   - [DONE] Develop a complete scanner for the SCL language
   - [DONE] Investigate and solve why scanner is ignoring last lexeme 
-  - Write report
+  - [DONE] Write report
 
-### MAR 16
+### MAR 21
 - Parser + `Scanner`
-  - Develop a complete parser for the SCL language. This parser program must execute with the scanner.
+  - [DONE] Write grammar as dictionary
+  - [] Parser that iterates, probably recursively (see parsing slides). through tokens and begins creating parse tree
+  - [] Write report
 
 
 ### APR 27
