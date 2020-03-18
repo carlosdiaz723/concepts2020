@@ -43,7 +43,7 @@ IDENTIFIERS/LITERALS:
                 | GOTO <Expression> 
                 | IF <Expression> THEN <Statement>  
                 | LET Id '=' <Expression> 
-                | PRINT <Print list>
+                | PRINT <Print List>
                 | PRINT '#' Integer ',' <Print List>
                 | Remark
                 | <Expression>
@@ -64,14 +64,14 @@ IDENTIFIERS/LITERALS:
 <Not Exp>     ::= NOT <Compare Exp> 
                 | <Compare Exp> 
 
-<Compare Exp> ::= <Add Exp> '='  <Compare Exp> 
-                | <Add Exp> '<>' <Compare Exp> 
-                | <Add Exp> '><' <Compare Exp> 
-                | <Add Exp> '>'  <Compare Exp> 
-                | <Add Exp> '>=' <Compare Exp> 
-                | <Add Exp> '<'  <Compare Exp> 
-                | <Add Exp> '<=' <Compare Exp> 
+<Compare Exp> ::= <Add Exp> <Comparator> <Compare Exp>
                 | <Add Exp> 
+
+<Comparator> ::= '=='
+               | '>'
+               | '>='
+               | '<'
+               | '<='
 
 <Add Exp>     ::= <Mult Exp> '+' <Add Exp> 
                 | <Mult Exp> '-' <Add Exp> 
