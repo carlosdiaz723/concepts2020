@@ -56,8 +56,8 @@ for index, lex in enumerate(lexemes):
         # attempt to match lex with a keyword
         x = re.search(lexicalRules.keywords[key], lex)
         if x is not None:
-            print('Lexeme {}: {}'.format(index, lex).ljust(21) +
-                  'Token:Keyword:    {}'.format(key))
+            #print('Lexeme {}: {}'.format(index, lex).ljust(21) +
+                  #'Token:Keyword:    {}'.format(key))
             listOfTokens.append((True, index, lex, 'keyword', key))
             keywordFound = True
             errorCount = 0
@@ -68,8 +68,8 @@ for index, lex in enumerate(lexemes):
         for key in lexicalRules.literals:
             y = re.search(lexicalRules.literals[key], lex)
             if y is not None:
-                print('Lexeme {}: {}'.format(index, lex).ljust(21) +
-                      'Token:Identifier: {}'.format(key))
+                #print('Lexeme {}: {}'.format(index, lex).ljust(21) +
+                      #'Token:Identifier: {}'.format(key))
                 listOfTokens.append((True, index, lex, 'identifier', key))
                 errorCount = 0
                 literalFound = True
@@ -78,12 +78,12 @@ for index, lex in enumerate(lexemes):
     errorCount += 1
     if errorCount > 1:
         # this will only execute if no possible matches were found
-        print('Lexeme {}: {}'.format(index, lex).ljust(21) +
-              'ERROR: ILLEGAL LEXEME')
+        #print('Lexeme {}: {}'.format(index, lex).ljust(21) +
+              #'ERROR: ILLEGAL LEXEME')
         listOfTokens.append((False, index, lex, None, None))
         # reset flag
         literalFound = False
-
+        
 
 def getAllTokens():
     '''
@@ -104,7 +104,7 @@ def getAllTokens():
 
 def getToken(n: int):
     '''
-    Teturns the nth tuple in the list.
+    Returns the nth tuple in the list.
 
     Each tuple is of form:
     (validity(true/false), lexemeNumber, lexeme, tokenType(id/keyword), token)
