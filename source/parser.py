@@ -9,7 +9,9 @@ for token in tokenList:
     
 '''
 
-    Need to create function to parse each token passed in by tokenList and begin creating parse tree
+    Need to create a function for each grammar rule in grammarRules.py 
+    each token passed from the tokenList variable to the correct function
     Will be using the top down approach (Recursive Descent) to build the parse tree
+    http://effbot.org/zone/simple-top-down-parsing.htm
     
 '''
