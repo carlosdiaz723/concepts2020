@@ -22,20 +22,16 @@ It should be ran from the 'source' directory.
 Note: All python files are pep8/pycodestyle compliant.
 '''
 
-import tokenizer
-
+import scanner
+import sys
+import lexicalRules as l
+import re
 # Will keep track of the current token
+
+global currentToken
 currentToken = 0
-tokenList = tokenizer.getAllTokens()
-
-
-'''
-Prints each tuple in the list
-Each tuple comes in the following format
-(validity(true/false), lexemeNumber, lexeme, tokenType(id/keyword), token)
-'''
-for token in tokenList:
-    print(token[2], token[4])
+global tokenList
+tokenList = scanner.getAllTokens()
 
 
 '''
@@ -47,26 +43,224 @@ for token in tokenList:
 '''
 
 
-'''
-class parser(object):
+def matchKey(pattern: str):
+    return re.search(l.keywords[pattern],
+                     tokenList[currentToken][2]) is not None
 
-    def __init__(self, tokens):
-        # This will hold all the tokens that have been created by the scanner/lexer
-        self.tokens = tokens
-        # This will hold the token index we are parsing at
-        self.token_index = 0
 
-    def parse(self):
+def matchLit(pattern: str):
+    return re.search(l.literals[pattern],
+                     tokenList[currentToken][2]) is not None
 
-        while self.token_index < len(self.tokens):
 
-            # Holds the type of tokens for example printable
-            token_type  = self.tokens[self.token_index][0]
-            # Holds the value of tokens for example Y
-            token_value = self.tokens[self.token.index][1]
+def lines():
+    '''
+    Starting point for the parser.
+    BNF rule:
+    <Lines> ::= Integer <Statement> NewLine <Lines>
+              | Integer <Statement> NewLine
+    '''
 
-            print(token_type, token_value)
+    # enter program
+    print("enter <lines>")
 
-            #Increment token index by 1 so we can loop through the next token
-            self.token.index += 1
-'''
+    assert matchLit('integer'), 'integer expected, not found'
+    global currentToken
+    print('Integer Line Number found: ', tokenList[currentToken][2])
+    currentToken += 1
+    statement()
+    assert matchKey('newLine'), '<newline> expected, not found'
+    print('newLine found: ', tokenList[currentToken][2])
+    currentToken += 1
+    if currentToken == len(tokenList) - 1:
+        print("exit <lines>")
+    else:
+        lines()
+
+
+def statement():
+    '''
+    BNF rule:
+    <Statement> ::= END
+                  | GOTO <Expression>
+                  | IF <Expression> THEN <Statement>
+                  | LET Id '=' <Expression>
+                  | PRINT <Expression>
+                  | PRINT '#' Integer ',' <Expression>
+                  | REM Remark
+                  | <Expression>
+
+    '''
+    global currentToken
+    print('enter <statement>')
+    if matchKey('end'):
+        print('END found, terminating parse.')
+        sys.exit()
+    elif matchKey('goTo'):
+        print('GOTO key found')
+        currentToken += 1
+        expression()
+    elif matchKey('if'):
+        print('IF key found')
+        currentToken += 1
+        expression()
+        assert matchKey('then'), 'THEN expected, not found'
+        print('THEN key found')
+        currentToken += 1
+        expression()
+    elif matchKey('instantiation'):
+        print('LET key found')
+        currentToken += 1
+        assert matchLit(
+            'printable'), 'printable identifier expected, not found'
+        print('PRINTABLE/ID found: ', tokenList[currentToken][2])
+        currentToken += 1
+        assert matchKey(
+            'assignment'), 'assignment operator expected, not found'
+        print('ASSIGNMENT key (=) found')
+        currentToken += 1
+        expression()
+    elif matchKey('print'):
+        print('PRINT key found')
+        currentToken += 1
+        if matchKey('pound'):
+            print('POUND key found')
+            currentToken += 1
+            assert matchLit('integer'), 'integer expected, not found'
+            print('Integer Line Number found: ', tokenList[currentToken][2])
+            currentToken += 1
+            assert matchKey('comma'), 'comma expected, not found'
+            print('COMMA key found')
+            currentToken += 1
+            expression()
+        else:
+            currentToken += 1
+            expression()
+    elif matchKey('remark'):
+        print('REM key found, enter Remark')
+        currentToken += 1
+        remarkString = ""
+        assert matchLit('printable'), 'printable expected, not found'
+        remarkString += scanner.getToken(currentToken)[2] + " "
+        currentToken += 1
+        while matchLit('printable') and not matchKey('newLine'):
+            remarkString += scanner.getToken(currentToken)[2] + " "
+            currentToken += 1
+        print("Remark found: ", remarkString)
+    else:
+        expression()
+
+    print('exit <statement>')
+
+
+def expression():
+    '''
+    BNF Rule:
+    <Expression> ::= <And Exp> OR <Expression>
+                   | <And Exp>
+    '''
+    global currentToken
+    print('enter <expression>')
+    andExp()
+    currentToken += 1
+    if matchKey('or'):
+        print('OR key found')
+        currentToken += 1
+        expression()
+    print('exit <expression>')
+
+
+def andExp():
+    global currentToken
+    print('enter <andExp>')
+    notExp()
+    currentToken += 1
+    if matchKey('and'):
+        print('and key found')
+        currentToken += 1
+        andExp()
+    print('exit <andExp>')
+
+
+def notExp():
+    global currentToken
+    print('enter <notExp>')
+    if matchKey('not'):
+        print('boolean negation (not) key found')
+        currentToken += 1
+    compareExp()
+    print('exit <andExp>')
+
+
+def compareExp():
+    global currentToken
+    print('enter <compareExp>')
+    addExp()
+    currentToken += 1
+    if tokenList[currentToken][4] in ['isEqualTo', 'greaterT', 'lessThan']:
+        print('comparator found: ', tokenList[currentToken][2])
+        comparator()  # questionable
+        currentToken += 1
+        compareExp()
+    print('exit <compareExp>')
+
+
+def comparator():
+    global currentToken
+    print('comparator identified: ', end='')
+    if matchKey('isEqualTo'):
+        print(' isEqualTo ')
+    elif matchKey('greaterT'):
+        print(' greaterT ')
+    elif matchKey(' lessThan '):
+        print(' lessThan ')
+    else:
+        sys.exit('UNEXPECTED ERROR')
+
+
+def addExp():
+    global currentToken
+    print('enter <addExp>')
+    multExp()
+    currentToken += 1
+    if matchKey('plus'):
+        print('plus (+) key found')
+        currentToken += 1
+        addExp()
+    elif matchKey('minus'):
+        print('minus (-) key found')
+        currentToken += 1
+        addExp()
+    print('exit <addExp>')
+
+
+def multExp():
+    global currentToken
+    print('enter <multExp>')
+    negateExp()
+    currentToken += 1
+    if matchKey('multiplication'):
+        print('multiplication (*) key found')
+        currentToken += 1
+        multExp()
+    elif matchKey('division'):
+        print('division (/) key found')
+        currentToken += 1
+        multExp()
+    print('exit <multExp>')
+
+
+def negateExp():
+    global currentToken
+    print('enter <negateExp>')
+    if matchKey('minus'):
+        print('numerical negation (-) key found')
+        currentToken += 1
+    powerExp()
+    print('exit <negateExp>')
+
+
+def powerExp():
+
+
+lines()
