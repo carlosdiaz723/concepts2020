@@ -26,13 +26,14 @@ import scanner
 import sys
 import lexicalRules as l
 import re
+from pprint import pprint as pretty
 # Will keep track of the current token
 
 global currentToken
 currentToken = 0
 global tokenList
 tokenList = scanner.getAllTokens()
-
+pretty(tokenList[20:])
 
 '''
     Need to create a function for each grammar rule in grammarRules.py
@@ -60,17 +61,16 @@ def lines():
     <Lines> ::= Integer <Statement> NewLine <Lines>
               | Integer <Statement> NewLine
     '''
-
-    # enter program
-    print("enter <lines>")
-
-    assert matchLit('integer'), 'integer expected, not found'
     global currentToken
+
+    print("enter <lines>")
+    assert matchLit('integer'), 'integer expected, not found'
     print('Integer Line Number found: ', tokenList[currentToken][2])
     currentToken += 1
     statement()
-    assert matchKey('newLine'), '<newline> expected, not found'
-    print('newLine found: ', tokenList[currentToken][2])
+    assert matchKey('newLine'), '<newline> expected, instead found: '\
+        + str(tokenList[currentToken][1:2])
+    print('newLine found')
     currentToken += 1
     if currentToken == len(tokenList) - 1:
         print("exit <lines>")
@@ -89,13 +89,11 @@ def statement():
                   | PRINT '#' Integer ',' <Expression>
                   | REM Remark
                   | <Expression>
-
     '''
     global currentToken
     print('enter <statement>')
     if matchKey('end'):
-        print('END found, terminating parse.')
-        sys.exit()
+        sys.exit('END found, terminating parse.')
     elif matchKey('goTo'):
         print('GOTO key found')
         currentToken += 1
@@ -167,6 +165,8 @@ def expression():
         print('OR key found')
         currentToken += 1
         expression()
+    else:
+        currentToken -= 1
     print('exit <expression>')
 
 
@@ -179,17 +179,19 @@ def andExp():
         print('and key found')
         currentToken += 1
         andExp()
+    else:
+        currentToken -= 1
     print('exit <andExp>')
 
 
 def notExp():
     global currentToken
     print('enter <notExp>')
-    if matchKey('not'):
+    if matchKey('negation'):
         print('boolean negation (not) key found')
         currentToken += 1
     compareExp()
-    print('exit <andExp>')
+    print('exit <notExp>')
 
 
 def compareExp():
@@ -202,6 +204,8 @@ def compareExp():
         comparator()  # questionable
         currentToken += 1
         compareExp()
+    else:
+        currentToken -= 1
     print('exit <compareExp>')
 
 
@@ -231,6 +235,8 @@ def addExp():
         print('minus (-) key found')
         currentToken += 1
         addExp()
+    else:
+        currentToken -= 1
     print('exit <addExp>')
 
 
@@ -247,6 +253,8 @@ def multExp():
         print('division (/) key found')
         currentToken += 1
         multExp()
+    else:
+        currentToken -= 1
     print('exit <multExp>')
 
 
@@ -256,11 +264,45 @@ def negateExp():
     if matchKey('minus'):
         print('numerical negation (-) key found')
         currentToken += 1
-    powerExp()
+    value()
     print('exit <negateExp>')
 
 
-def powerExp():
+def value():
+    global currentToken
+    if matchKey('openParen'):
+        print('open parenthesis found')
+        currentToken += 1
+        expression()
+        assert matchKey('closeParen'),\
+            'closing parenthesis expected, instead found' + \
+            str(tokenList[currentToken][1:3])
+    elif matchLit('printable'):
+        print('printable value found: ', tokenList[currentToken][2])
+        currentToken += 1
+        if matchKey('openParen'):
+            print('open parenthesis found')
+            currentToken += 1
+            expression()
+            assert matchKey('closeParen'),\
+                'closing parenthesis expected, not found'
+    else:
+        constant()
+    print('exit <value>')
+
+
+def constant():
+    global currentToken
+    print('enter <constant>')
+    if matchLit('string'):
+        print('string found: ', tokenList[currentToken][2])
+        currentToken += 1
+    elif matchLit('integer'):
+        print('integer found: ', tokenList[currentToken][2])
+        currentToken += 1
+    else:
+        sys.exit('UNEXPECTED ERROR')
+    print('exit <constant>')
 
 
 lines()

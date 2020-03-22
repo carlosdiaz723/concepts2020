@@ -80,4 +80,3 @@ IDENTIFIERS/LITERALS:
 
 <Constant> ::= Integer 
              | String 
-             | Real 
