@@ -26,22 +26,12 @@ import scanner
 import sys
 import lexicalRules as l
 import re
-from pprint import pprint as pretty
 # Will keep track of the current token
 
 global currentToken
 currentToken = 0
 global tokenList
 tokenList = scanner.getAllTokens()
-pretty(tokenList)
-
-'''
-    Need to create a function for each grammar rule in grammarRules.py
-    each token passed from the tokenList variable to the correct function
-    Will be using the top down approach (Recursive Descent) to build the parse
-    tree
-    http://effbot.org/zone/simple-top-down-parsing.htm
-'''
 
 
 def matchKey(pattern: str):
@@ -177,6 +167,11 @@ def expression():
 
 
 def andExp():
+    '''
+    BNF Rule:
+    <And Exp> ::= <Not Exp> AND <And Exp>
+                | <Not Exp>
+    '''
     global currentToken
     print('enter <andExp>')
     notExp()
@@ -191,6 +186,11 @@ def andExp():
 
 
 def notExp():
+    '''
+    BNF Rule:
+    <Not Exp> ::= NOT <Compare Exp>
+                | <Compare Exp>
+    '''
     global currentToken
     print('enter <notExp>')
     if matchKey('negation'):
@@ -201,6 +201,11 @@ def notExp():
 
 
 def compareExp():
+    '''
+    BNF Rule:
+    <Compare Exp> ::= <Add Exp> <Comparator> <Add Exp>
+                    | <Add Exp>
+    '''
     global currentToken
     print('enter <compareExp>')
     addExp()
@@ -217,6 +222,12 @@ def compareExp():
 
 
 def comparator():
+    '''
+    BNF Rule:
+    <Comparator> ::= '=='
+                   | '>'
+                   | '<'
+    '''
     global currentToken
     print('comparator identified: ', end='')
     if matchKey('isEqualTo'):
@@ -230,6 +241,12 @@ def comparator():
 
 
 def addExp():
+    '''
+    BNF Rule:
+    <Add Exp> ::= <Mult Exp> '+' <Add Exp>
+                | <Mult Exp> '-' <Add Exp>
+                | <Mult Exp>
+    '''
     global currentToken
     print('enter <addExp>')
     multExp()
@@ -245,6 +262,12 @@ def addExp():
 
 
 def multExp():
+    '''
+    BNF Rule:
+    <Mult Exp> ::= <Negate Exp> '*' <Mult Exp>
+                 | <Negate Exp> '/' <Mult Exp>
+                 | <Negate Exp>
+    '''
     global currentToken
     print('enter <multExp>')
     negateExp()
@@ -260,6 +283,11 @@ def multExp():
 
 
 def negateExp():
+    '''
+    BNF Rule:
+    <Negate Exp> ::= '-' <Value>
+                   | <Value>
+    '''
     global currentToken
     print('enter <negateExp>')
     if matchKey('minus'):
@@ -270,6 +298,12 @@ def negateExp():
 
 
 def value():
+    '''
+    BNF Rule:
+    <Value> ::= '(' <Expression> ')'
+              | ID '(' <Expression> ')'
+              | <Constant>
+    '''
     global currentToken
     if matchKey('openParen'):
         print('open parenthesis found')
@@ -292,6 +326,11 @@ def value():
 
 
 def constant():
+    '''
+    BNF Rule:
+    <Constant> ::= Integer
+                 | String
+    '''
     global currentToken
     print('enter <constant>')
     if matchLit('string'):
