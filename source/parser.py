@@ -33,7 +33,7 @@ global currentToken
 currentToken = 0
 global tokenList
 tokenList = scanner.getAllTokens()
-pretty(tokenList[20:])
+pretty(tokenList)
 
 '''
     Need to create a function for each grammar rule in grammarRules.py
@@ -62,8 +62,6 @@ def lines():
               | Integer <Statement> NewLine
     '''
     global currentToken
-
-    print("enter <lines>")
     assert matchLit('integer'), 'integer expected, not found'
     print('Integer Line Number found: ', tokenList[currentToken][2])
     currentToken += 1
@@ -73,7 +71,7 @@ def lines():
     print('newLine found')
     currentToken += 1
     if currentToken == len(tokenList) - 1:
-        print("exit <lines>")
+        print("terminating")
     else:
         lines()
 
@@ -82,7 +80,7 @@ def statement():
     '''
     BNF rule:
     <Statement> ::= END
-                  | GOTO <Expression>
+                  | GOTO Integer
                   | IF <Expression> THEN <Statement>
                   | LET Id '=' <Expression>
                   | PRINT <Expression>
@@ -97,15 +95,24 @@ def statement():
     elif matchKey('goTo'):
         print('GOTO key found')
         currentToken += 1
-        expression()
+        assert matchLit('integer'), 'integer line number expected, not found'
+        print('Integer line number found: ', tokenList[currentToken][2])
+        currentToken += 1
     elif matchKey('if'):
         print('IF key found')
         currentToken += 1
+        assert matchKey('openParen'), 'open parenthesis expected, not found'
+        print('open parenthesis found')
+        currentToken += 1
         expression()
+        assert matchKey('closeParen'),\
+            'close parenthesis expected, instead found ' + \
+            tokenList[currentToken][2]
+        currentToken += 1
         assert matchKey('then'), 'THEN expected, not found'
         print('THEN key found')
         currentToken += 1
-        expression()
+        statement()
     elif matchKey('instantiation'):
         print('LET key found')
         currentToken += 1
@@ -132,7 +139,6 @@ def statement():
             currentToken += 1
             expression()
         else:
-            currentToken += 1
             expression()
     elif matchKey('remark'):
         print('REM key found, enter Remark')
@@ -199,11 +205,12 @@ def compareExp():
     print('enter <compareExp>')
     addExp()
     currentToken += 1
-    if tokenList[currentToken][4] in ['isEqualTo', 'greaterT', 'lessThan']:
-        print('comparator found: ', tokenList[currentToken][2])
+    if tokenList[currentToken - 1][4] in ['isEqualTo', 'greaterT', 'lessThan']:
+        print('comparator found: ', tokenList[currentToken - 1][2])
+        currentToken -= 1
         comparator()  # questionable
         currentToken += 1
-        compareExp()
+        addExp()
     else:
         currentToken -= 1
     print('exit <compareExp>')
@@ -219,14 +226,13 @@ def comparator():
     elif matchKey(' lessThan '):
         print(' lessThan ')
     else:
-        sys.exit('UNEXPECTED ERROR')
+        sys.exit('UNEXPECTED ERROR 1')
 
 
 def addExp():
     global currentToken
     print('enter <addExp>')
     multExp()
-    currentToken += 1
     if matchKey('plus'):
         print('plus (+) key found')
         currentToken += 1
@@ -235,8 +241,6 @@ def addExp():
         print('minus (-) key found')
         currentToken += 1
         addExp()
-    else:
-        currentToken -= 1
     print('exit <addExp>')
 
 
@@ -244,7 +248,6 @@ def multExp():
     global currentToken
     print('enter <multExp>')
     negateExp()
-    currentToken += 1
     if matchKey('multiplication'):
         print('multiplication (*) key found')
         currentToken += 1
@@ -253,8 +256,6 @@ def multExp():
         print('division (/) key found')
         currentToken += 1
         multExp()
-    else:
-        currentToken -= 1
     print('exit <multExp>')
 
 
@@ -274,21 +275,20 @@ def value():
         print('open parenthesis found')
         currentToken += 1
         expression()
-        assert matchKey('closeParen'),\
-            'closing parenthesis expected, instead found' + \
-            str(tokenList[currentToken][1:3])
-    elif matchLit('printable'):
-        print('printable value found: ', tokenList[currentToken][2])
+        assert matchKey('closeParen'), 'close parenthesis expected, not found'
+        print('close parenthesis found')
         currentToken += 1
-        if matchKey('openParen'):
-            print('open parenthesis found')
-            currentToken += 1
-            expression()
-            assert matchKey('closeParen'),\
-                'closing parenthesis expected, not found'
+    elif matchLit('printable') and tokenList[currentToken + 1] == '(':
+        print('printable found: ', tokenList[currentToken][2])
+        currentToken += 1
+        assert matchKey('openParen'), 'close parenthesis expected, not found'
+        print('open parenthesis found')
+        currentToken += 1
+        expression()
+        assert matchKey(
+            'closeParen'), 'close parenthesis expected, not found'
     else:
         constant()
-    print('exit <value>')
 
 
 def constant():
@@ -300,8 +300,11 @@ def constant():
     elif matchLit('integer'):
         print('integer found: ', tokenList[currentToken][2])
         currentToken += 1
+    elif matchLit('printable'):
+        print('printable found: ', tokenList[currentToken][2])
+        currentToken += 1
     else:
-        sys.exit('UNEXPECTED ERROR')
+        sys.exit('UNEXPECTED ERROR 2')
     print('exit <constant>')
 
 
