@@ -37,8 +37,8 @@ IDENTIFIERS/LITERALS:
                 | Integer <Statement> NewLine
 
 <Statement>   ::= END            
-                | GOTO <Expression> 
-                | IF <Expression> THEN <Statement>  
+                | GOTO Integer
+                | IF '(' <Expression> ')' THEN <Statement>  
                 | LET Id '=' <Expression> 
                 | PRINT <Expression>
                 | PRINT '#' Integer ',' <Expression>
@@ -55,7 +55,7 @@ IDENTIFIERS/LITERALS:
 <Not Exp>     ::= NOT <Compare Exp> 
                 | <Compare Exp> 
 
-<Compare Exp> ::= <Add Exp> <Comparator> <Compare Exp>
+<Compare Exp> ::= <Add Exp> <Comparator> <Add Exp>
                 | <Add Exp> 
 
 <Comparator> ::= '=='
@@ -74,7 +74,6 @@ IDENTIFIERS/LITERALS:
                 | <Value> 
 
 <Value>       ::= '(' <Expression> ')'
-                | ID 
                 | ID '(' <Expression> ')'
                 | <Constant> 
 
