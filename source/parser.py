@@ -52,18 +52,21 @@ def lines():
               | Integer <Statement> NewLine
     '''
     global currentToken
-    assert matchLit('integer'), 'integer expected, not found'
-    print('Integer Line Number found: ', tokenList[currentToken][2])
+    print('\\enter <lines>')
+    assert matchLit('integer'), 'integer expected, instead found: '\
+        + str(tokenList[currentToken][2])
+    print('LINE NUMBER found: ', tokenList[currentToken][2])
     currentToken += 1
     statement()
     assert matchKey('newLine'), '<newline> expected, instead found: '\
-        + str(tokenList[currentToken][1:2])
-    print('newLine found')
+        + str(tokenList[currentToken][2])
+    print('NEWLINE found')
     currentToken += 1
     if currentToken == len(tokenList) - 1:
         print("terminating")
     else:
         lines()
+    print('/exit <lines>')
 
 
 def statement():
@@ -79,7 +82,7 @@ def statement():
                   | <Expression>
     '''
     global currentToken
-    print('enter <statement>')
+    print('\\enter <statement>')
     if matchKey('end'):
         sys.exit('END found, terminating parse.')
     elif matchKey('goTo'):
@@ -144,7 +147,7 @@ def statement():
     else:
         expression()
 
-    print('exit <statement>')
+    print('/exit <statement>')
 
 
 def expression():
@@ -154,7 +157,7 @@ def expression():
                    | <And Exp>
     '''
     global currentToken
-    print('enter <expression>')
+    print('\\enter <expression>')
     andExp()
     currentToken += 1
     if matchKey('or'):
@@ -163,7 +166,7 @@ def expression():
         expression()
     else:
         currentToken -= 1
-    print('exit <expression>')
+    print('/exit <expression>')
 
 
 def andExp():
@@ -173,7 +176,7 @@ def andExp():
                 | <Not Exp>
     '''
     global currentToken
-    print('enter <andExp>')
+    print('\\enter <andExp>')
     notExp()
     currentToken += 1
     if matchKey('and'):
@@ -182,7 +185,7 @@ def andExp():
         andExp()
     else:
         currentToken -= 1
-    print('exit <andExp>')
+    print('/exit <andExp>')
 
 
 def notExp():
@@ -192,12 +195,12 @@ def notExp():
                 | <Compare Exp>
     '''
     global currentToken
-    print('enter <notExp>')
+    print('\\enter <notExp>')
     if matchKey('negation'):
         print('boolean negation (not) key found')
         currentToken += 1
     compareExp()
-    print('exit <notExp>')
+    print('/exit <notExp>')
 
 
 def compareExp():
@@ -207,7 +210,7 @@ def compareExp():
                     | <Add Exp>
     '''
     global currentToken
-    print('enter <compareExp>')
+    print('\\enter <compareExp>')
     addExp()
     currentToken += 1
     if tokenList[currentToken - 1][4] in ['isEqualTo', 'greaterT', 'lessThan']:
@@ -218,7 +221,7 @@ def compareExp():
         addExp()
     else:
         currentToken -= 1
-    print('exit <compareExp>')
+    print('/exit <compareExp>')
 
 
 def comparator():
@@ -248,7 +251,7 @@ def addExp():
                 | <Mult Exp>
     '''
     global currentToken
-    print('enter <addExp>')
+    print('\\enter <addExp>')
     multExp()
     if matchKey('plus'):
         print('plus (+) key found')
@@ -258,7 +261,7 @@ def addExp():
         print('minus (-) key found')
         currentToken += 1
         addExp()
-    print('exit <addExp>')
+    print('/exit <addExp>')
 
 
 def multExp():
@@ -269,7 +272,7 @@ def multExp():
                  | <Negate Exp>
     '''
     global currentToken
-    print('enter <multExp>')
+    print('\\enter <multExp>')
     negateExp()
     if matchKey('multiplication'):
         print('multiplication (*) key found')
@@ -279,7 +282,7 @@ def multExp():
         print('division (/) key found')
         currentToken += 1
         multExp()
-    print('exit <multExp>')
+    print('/exit <multExp>')
 
 
 def negateExp():
@@ -289,12 +292,12 @@ def negateExp():
                    | <Value>
     '''
     global currentToken
-    print('enter <negateExp>')
+    print('\\enter <negateExp>')
     if matchKey('minus'):
         print('numerical negation (-) key found')
         currentToken += 1
     value()
-    print('exit <negateExp>')
+    print('/exit <negateExp>')
 
 
 def value():
@@ -332,7 +335,7 @@ def constant():
                  | String
     '''
     global currentToken
-    print('enter <constant>')
+    print('\\enter <constant>')
     if matchLit('string'):
         print('string found: ', tokenList[currentToken][2])
         currentToken += 1
@@ -344,7 +347,7 @@ def constant():
         currentToken += 1
     else:
         sys.exit('UNEXPECTED ERROR 2')
-    print('exit <constant>')
+    print('/exit <constant>')
 
 
 lines()
