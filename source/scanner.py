@@ -16,11 +16,10 @@ Course Project
 
 
 File Description:
-This is where the list of lexemes is tokenized and printed.
+This is where the source .bas file is scanned and tokenized. 
 
 Note: All python files are pep8/pycodestyle compliant.
 '''
-from pprint import pprint as pretty
 import re
 import lexicalRules
 
