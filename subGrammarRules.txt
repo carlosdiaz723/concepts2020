@@ -18,7 +18,6 @@ KEYWORDS:
     minus: ^-$
     or: (?i)^OR$
     and: (?i)^AND$
-    goTo: (?i)^GOTO$
     if: (?i)^IF$
     end: (?i)^END$
     print: (?i)^PRINT$
@@ -37,7 +36,6 @@ IDENTIFIERS/LITERALS:
                 | Integer <Statement> NewLine
 
 <Statement>   ::= END            
-                | GOTO Integer
                 | IF '(' <Expression> ')' THEN <Statement>  
                 | LET Id '=' <Expression> 
                 | PRINT <Expression>
