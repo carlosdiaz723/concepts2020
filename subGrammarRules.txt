@@ -33,27 +33,18 @@ IDENTIFIERS/LITERALS:
             
 
 
-<Lines>       ::= Integer <Statements> NewLine <Lines> 
-                | Integer <Statements> NewLine
-
-<Statements>  ::= <Statement> ':' <Statements>
-                | <Statement>
+<Lines>       ::= Integer <Statement> NewLine <Lines> 
+                | Integer <Statement> NewLine
 
 <Statement>   ::= END            
-                | GOTO <Expression> 
-                | IF <Expression> THEN <Statement>  
+                | GOTO Integer
+                | IF '(' <Expression> ')' THEN <Statement>  
                 | LET Id '=' <Expression> 
-                | PRINT <Print List>
-                | PRINT '#' Integer ',' <Print List>
-                | Remark
+                | PRINT <Expression>
+                | PRINT '#' Integer ',' <Expression>
+                | REM Remark
                 | <Expression>
 
-                 
-<Expression List> ::= <Expression> ',' <Expression List> 
-                    | <Expression> 
-
-<Print List>      ::= <Expression> ';' <Print List>
-                    | <Expression> 
 
 <Expression>  ::= <And Exp> OR <Expression> 
                 | <And Exp> 
@@ -64,14 +55,12 @@ IDENTIFIERS/LITERALS:
 <Not Exp>     ::= NOT <Compare Exp> 
                 | <Compare Exp> 
 
-<Compare Exp> ::= <Add Exp> <Comparator> <Compare Exp>
+<Compare Exp> ::= <Add Exp> <Comparator> <Add Exp>
                 | <Add Exp> 
 
 <Comparator> ::= '=='
                | '>'
-               | '>='
                | '<'
-               | '<='
 
 <Add Exp>     ::= <Mult Exp> '+' <Add Exp> 
                 | <Mult Exp> '-' <Add Exp> 
@@ -81,17 +70,12 @@ IDENTIFIERS/LITERALS:
                 | <Negate Exp> '/' <Mult Exp> 
                 | <Negate Exp> 
 
-<Negate Exp>  ::= '-' <Power Exp> 
-                | <Power Exp> 
-
-<Power Exp>   ::= <Power Exp> '^' <Value> 
+<Negate Exp>  ::= '-' <Value> 
                 | <Value> 
 
 <Value>       ::= '(' <Expression> ')'
-                | ID 
-                | ID '(' <Expression List> ')'
+                | ID '(' <Expression> ')'
                 | <Constant> 
 
 <Constant> ::= Integer 
              | String 
-             | Real 

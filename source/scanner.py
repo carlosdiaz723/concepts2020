@@ -16,37 +16,55 @@ Course Project
 
 
 File Description:
-This is where the scanner determines what each individual lexeme is. For the
-purposes of this assignment, the scanner only FINDS the lexemes, it does NOT
-tokenize them. This is the job of the tokenizer. We are aware that it is
-possible to tokenize upon finding each lexeme, but have chosen not to so that
-the implementation and debugging of the future sections of the interpreter is
-easier. Thus, the scanning will be abstracted out from the eyes of the
-tokenier, which will produce the desired result.
+This is where the source .bas file is scanned and tokenized. 
 
 Note: All python files are pep8/pycodestyle compliant.
 '''
+import re
+import lexicalRules
 
 
-'''
-list of symbols that are separators, just like whitespace.
-'''
+# list of symbols that are separators, just like whitespace.
 symbols = ['{', '}', '(', ')', '[', ']', '.', '"', '*', '\n', ':', ',', ';',
            '+', '-', '>', '<', '/']
-
-
-'''
-special cases where a keyword is two symbols and might be accidentally
-scanned as two different lexemes. As far as we're concerned, BASIC does not
-include any of these, but the capability will be left just in case.
-
-We originally included this because SCL DOES have double symbol separators.
-'''
 doubleSymbols = ['..', ':=']
 
 
 # SEPARATORS houses all possible special separators
 SEPARATORS = symbols + doubleSymbols
+
+
+def getAllTokens():
+    '''
+    Will return the entire list of tuples containing information about each
+    lexeme/token.
+
+    Each tuple is of form:
+    (validity(true/false), lexemeNumber, lexeme, tokenType(id/keyword), token)
+
+    Example:
+    (True, 2, 'if', 'keyword', 'IF')
+
+    Invalid tokens are of form:
+    (False, lexemeNumber, lexeme, None, None)
+    '''
+    return listOfTokens
+
+
+def getToken(n: int):
+    '''
+    Returns the nth tuple in the list.
+
+    Each tuple is of form:
+    (validity(true/false), lexemeNumber, lexeme, tokenType(id/keyword), token)
+
+    Example:
+    (True, 2, 'if', 'keyword', 'IF')
+
+    Invalid tokens are of form:
+    (False, lexemeNumber, lexeme, None, None)
+    '''
+    return listOfTokens[n]
 
 
 def isAnInteger(input: str):
@@ -80,7 +98,7 @@ def scan(string: str):
                 return listOfLexemes
             if (index + 1 < len(string)):
                 if string[index + 1] == ' ' or string[index + 1] in SEPARATORS\
-                  or lexeme in SEPARATORS:
+                        or lexeme in SEPARATORS:
                     if (lexeme + string[index + 1]) in doubleSymbols:
                         # the special doubleSymbol case
                         lexeme = lexeme + string[index + 1]
@@ -98,3 +116,53 @@ def scan(string: str):
             # remove restriction so only one loop is skipped on double case
             doubleFound = False
     return listOfLexemes
+
+
+# open example file as a string
+with open('example.bas', 'r') as exampleFile:
+    ex1 = exampleFile.read()
+
+
+# gather list of lexemes from scanner.py
+lexemes = scan(ex1)
+
+
+# bool used to short circuit to reduce redundant searching
+keywordFound = False
+literalFound = False
+errorCount = 0
+
+
+# list of tuples, tuples in form of:
+# (validity(true/false), lexemeNumber, lexeme, tokenType(id/keyword), token)
+listOfTokens = list(tuple())
+
+
+# loop through each lexeme and keep track of index
+for index, lex in enumerate(lexemes):
+    keywordFound = False
+    # check all keywords first
+    for key in lexicalRules.keywords:
+        # attempt to match lex with a keyword
+        x = re.search(lexicalRules.keywords[key], lex)
+        if x is not None:
+            listOfTokens.append((True, index, lex, 'keyword', key))
+            keywordFound = True
+            errorCount = 0
+            # break if found, skip to next lexeme
+            break
+    # if no keyword matches, check if a literal
+    if not keywordFound:
+        for key in lexicalRules.literals:
+            y = re.search(lexicalRules.literals[key], lex)
+            if y is not None:
+                listOfTokens.append((True, index, lex, 'identifier', key))
+                errorCount = 0
+                literalFound = True
+                # break if found, skip to next lexeme
+                break
+    errorCount += 1
+    if errorCount > 1:
+        listOfTokens.append((False, index, lex, None, None))
+        # reset flag
+        literalFound = False
