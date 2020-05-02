@@ -42,7 +42,6 @@ IDENTIFIERS/LITERALS:
                 | REM Remark
                 | <Expression>
 
-
 <Expression>  ::= <And Exp> OR <Expression> 
                 | <And Exp> 
 
@@ -63,12 +62,9 @@ IDENTIFIERS/LITERALS:
                 | <Mult Exp> '-' <Add Exp> 
                 | <Mult Exp> 
 
-<Mult Exp>    ::= <Negate Exp> '*' <Mult Exp> 
-                | <Negate Exp> '/' <Mult Exp> 
-                | <Negate Exp> 
-
-<Negate Exp>  ::= '-' <Value> 
-                | <Value> 
+<Mult Exp>    ::= <Value> '*' <Mult Exp> 
+                | <Value> '/' <Mult Exp> 
+                | <Value>
 
 <Value>       ::= '(' <Expression> ')'
                 | <Constant> 

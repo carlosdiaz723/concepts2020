@@ -14,11 +14,6 @@ SECTION W01 – SPRING 2020
 Course Project
 2nd Deliverable: Parser
 
-
-File Description:
-THIS IS THE ONLY FILE THAT SHOULD BE RAN.
-It should be ran from the 'source' directory.
-
 Note: All python files are pep8/pycodestyle compliant.
 '''
 
@@ -26,14 +21,12 @@ import scanner
 import sys
 import lexicalRules as l
 import re
-from pprint import pprint as pretty
 # Will keep track of the current token
 
 global currentToken
 currentToken = 0
 global tokenList
 tokenList = scanner.getAllTokens()
-# pretty(tokenList)
 
 
 def matchKey(pattern: str):
@@ -273,41 +266,22 @@ class Program:
         '''
         global currentToken
         # print('\\enter <multExp>')
-        negateExp = self.negateExp()
+        value = self.value()
         if matchKey('multiplication'):
             # print('multiplication (*) key found')
-            negateExp.append('*')
+            value.append('*')
             currentToken += 1
             multExp = self.multExp()
             for element in (multExp):
-                negateExp.append(element)
+                value.append(element)
         elif matchKey('division'):
             # print('division (/) key found')
-            negateExp.append('/')
+            value.append('/')
             currentToken += 1
             multExp = self.multExp()
             for element in (multExp):
-                negateExp.append(element)
+                value.append(element)
         # print('/exit <multExp>')
-        return negateExp
-
-    def negateExp(self):
-        '''
-        BNF Rule:
-        <Negate Exp> ::= '-' <Value>
-                    | <Value>
-        '''
-        global currentToken
-        # print('\\enter <negateExp>')
-        negate = False
-        if matchKey('minus'):
-            # print('numerical negation (-) key found')
-            negate = True
-            currentToken += 1
-        value = self.value()
-        if negate:
-            value.insert(0, '-')
-        # print('/exit <negateExp>')
         return value
 
     def value(self):
