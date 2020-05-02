@@ -25,7 +25,7 @@ import lexicalRules
 
 
 # list of symbols that are separators, just like whitespace.
-symbols = ['{', '}', '(', ')', '[', ']', '.', '"', '*', '\n', ':', ',', ';',
+symbols = ['{', '}', '(', ')', '[', ']', '.', '*', '\n', ':', ',', ';',
            '+', '-', '>', '<', '/']
 doubleSymbols = ['..', ':=']
 

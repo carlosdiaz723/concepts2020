@@ -11,19 +11,21 @@ op = {'+': lambda x, y: x + y,
       '>': lambda x, y: x > y,
       '<': lambda x, y: x < y,
       '==': lambda x, y: x == y,
-      '==': lambda x: -1 * x,
       'not': lambda x: not x}
 
 
 def evaluate(ex: list):
     if len(ex) == 3:
         op1 = ex[0]
-        if ex[0] in variables.keys():
-            op1 = variables[ex[0]]
+        if op1 in variables.keys():
+            op1 = variables[op1]
         op2 = ex[2]
-        if ex[2] in variables.keys():
-            op2 = variables[ex[2]]
-        return op[ex[1]](op1, op2)
+        if op2 in variables.keys():
+            op2 = variables[op2]
+        try:
+            return int(op[ex[1]](int(op1), int(op2)))
+        except TypeError:
+            return int(op[ex[1]](op1, op2))
     elif len(ex) == 2:
         op1 = ex[1]
         if op1 in variables.keys():
@@ -33,7 +35,10 @@ def evaluate(ex: list):
         try:
             return variables[ex[0]]
         except KeyError:
-            return int(ex[0])
+            try:
+                return int(ex[0])
+            except ValueError:
+                return ex[0][1:-1]
         except ValueError:
             return str(ex[0])
 

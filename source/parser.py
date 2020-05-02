@@ -26,12 +26,14 @@ import scanner
 import sys
 import lexicalRules as l
 import re
+from pprint import pprint as pretty
 # Will keep track of the current token
 
 global currentToken
 currentToken = 0
 global tokenList
 tokenList = scanner.getAllTokens()
+# pretty(tokenList)
 
 
 def matchKey(pattern: str):
@@ -59,7 +61,7 @@ class Program:
         self.statements.append(self.statement())
         currentToken += 1
         if currentToken == len(tokenList) - 1 and matchKey('end'):
-            print("Finished Parsing")
+            # print("Finished Parsing")
             self.statements.append(('end', None))
         else:
             self.lines()
@@ -341,7 +343,7 @@ class Program:
             # print('string found: ', tokenList[currentToken][2])
             token = tokenList[currentToken][2]
             currentToken += 1
-            return list(token)
+            return [token]
         elif matchLit('integer'):
             # print('integer found: ', tokenList[currentToken][2])
             token = tokenList[currentToken][2]
