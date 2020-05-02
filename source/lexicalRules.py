@@ -59,3 +59,15 @@ literals = {'integer': r'^[+-]?(\d)*$',
             'string': r'\"(\w)*\"',
             'printable': r'^([A-Za-z])([A-Za-z0-9])*$'
             }
+
+# for evaluating expressions with operators as string type
+operations = {'+': lambda x, y: x + y,
+              '-': lambda x, y: x - y,
+              '*': lambda x, y: x * y,
+              '/': lambda x, y: x / y,
+              'and': lambda x, y: x and y,
+              'or': lambda x, y: x or y,
+              '>': lambda x, y: x > y,
+              '<': lambda x, y: x < y,
+              '==': lambda x, y: x == y,
+              'not': lambda x: not x}

@@ -24,22 +24,11 @@ Note: All python files are pep8/pycodestyle compliant.
 
 from parser import Program
 import sys
+from lexicalRules import operations as op
 
 
 # simulation a variable look-up table
 variables = dict()
-
-# for evaluating expressions with operators as string type
-op = {'+': lambda x, y: x + y,
-      '-': lambda x, y: x - y,
-      '*': lambda x, y: x * y,
-      '/': lambda x, y: x / y,
-      'and': lambda x, y: x and y,
-      'or': lambda x, y: x or y,
-      '>': lambda x, y: x > y,
-      '<': lambda x, y: x < y,
-      '==': lambda x, y: x == y,
-      'not': lambda x: not x}
 
 
 def evaluateExpression(ex: list):

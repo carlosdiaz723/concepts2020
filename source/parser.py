@@ -41,15 +41,18 @@ def matchLit(pattern: str):
 
 class Program:
     '''
-    Starting point for the parser.
-    BNF rule:
-    <Lines> ::= Integer <Statement> NewLine <Lines>
-              | Integer <Statement> NewLine
+    the statements list will store all necessary information about each
+    statement (or line) in the program. This is the attribute that
+    interpreter.py will refer to before executing.
     '''
-
     statements = list()
 
     def lines(self):
+        '''
+        BNF rule:
+                    <Lines> ::= Integer <Statement> NewLine <Lines>
+                              | Integer <Statement> NewLine
+        '''
         global currentToken
         self.statements.append(self.statement())
         currentToken += 1
