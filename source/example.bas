@@ -1,8 +1,8 @@
-05 REM Example BASIC program
-10 LET A = 1
-20 LET B = 2
-25 LET C = 3
-30 IF (A > B) THEN PRINT A
-40 IF (B > C) THEN PRINT B
-50 PRINT C
-60 END
+REM Example BASIC program
+LET A = 1
+LET B = 2
+LET C = 3
+IF (A > B) THEN PRINT A
+IF (B < C) THEN PRINT B
+PRINT C
+end

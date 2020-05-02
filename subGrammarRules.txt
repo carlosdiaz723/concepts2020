@@ -32,8 +32,8 @@ IDENTIFIERS/LITERALS:
             
 
 
-<Lines>       ::= Integer <Statement> NewLine <Lines> 
-                | Integer <Statement> NewLine
+<Lines>       ::= <Statement> NewLine <Lines> 
+                | <Statement> NewLine
 
 <Statement>   ::= END            
                 | IF '(' <Expression> ')' THEN <Statement>  

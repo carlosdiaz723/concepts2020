@@ -56,13 +56,11 @@ class Program:
 
     def lines(self):
         global currentToken
-        assert matchLit('integer'), 'integer expected, instead found: '\
-            + str(tokenList[currentToken][2])
-        currentToken += 1
         self.statements.append(self.statement())
         currentToken += 1
-        if currentToken == len(tokenList) - 1:
-            print("terminating")
+        if currentToken == len(tokenList) - 1 and matchKey('end'):
+            print("Finished Parsing")
+            self.statements.append(('end', None))
         else:
             self.lines()
         return
@@ -81,8 +79,9 @@ class Program:
         global currentToken
         # print('\\enter <statement>')
         if matchKey('end'):
-            kind = "END"
-            return tuple(kind)
+            kind = "end"
+            print("end found in parser")
+            return tuple(kind, None)
         elif matchKey('if'):
             kind = "if"
             currentToken += 1
@@ -118,7 +117,7 @@ class Program:
             expression = self.expression()
             return (kind, expression)
         elif matchKey('remark'):
-            kind = "REM"
+            kind = "rem"
             currentToken += 1
             remarkString = ""
             assert matchLit('printable'), 'printable expected, not found'
@@ -127,8 +126,7 @@ class Program:
             while matchLit('printable') and not matchKey('newLine'):
                 remarkString += scanner.getToken(currentToken)[2] + " "
                 currentToken += 1
-            # print("Remark found: ", remarkString)
-            return tuple(kind)
+            return (kind, remarkString)
         else:
             kind = 'expression'
             expression = self.expression()
@@ -143,17 +141,17 @@ class Program:
         '''
         global currentToken
         # print('\\enter <expression>')
-        expression = self.andExp()
+        andExp = self.andExp()
         currentToken += 1
         if matchKey('or'):
             currentToken += 1
-            secondExpression = self.expression()
-            secondExpression.insert(0, 'or')
-            for i, element in enumerate(secondExpression):
-                expression.insert(i, element)
+            expression = self.expression()
+            expression.insert(0, 'or')
+            for element in expression:
+                andExp.append(element)
         else:
             currentToken -= 1
-        return expression
+        return andExp
 
     def andExp(self):
         '''
@@ -169,8 +167,8 @@ class Program:
             currentToken += 1
             andExp = self.andExp()
             andExp.insert(0, 'and')
-            for i, element in enumerate(andExp):
-                notExp.insert(i, element)
+            for element in andExp:
+                notExp.append(element)
         else:
             currentToken -= 1
         return notExp
@@ -212,8 +210,8 @@ class Program:
             addExp.append(self.comparator())
             currentToken += 1
             secondAdd = self.addExp()
-            for i, element in enumerate(secondAdd):
-                addExp.insert(i, element)
+            for element in secondAdd:
+                addExp.append(element)
         else:
             currentToken -= 1
         # print('/exit <compareExp>')
@@ -252,15 +250,15 @@ class Program:
             multExp.append('+')
             currentToken += 1
             secondMult = self.addExp()
-            for i, element in enumerate(secondMult):
-                multExp.insert(i, element)
+            for element in secondMult:
+                multExp.append(element)
         elif matchKey('minus'):
             # print('minus (-) key found')
             multExp.append('-')
             currentToken += 1
             secondMult = self.addExp()
-            for i, element in enumerate(secondMult):
-                multExp.insert(i, element)
+            for element in secondMult:
+                multExp.append(element)
         # print('/exit <addExp>')
         return multExp
 
@@ -279,15 +277,15 @@ class Program:
             negateExp.append('*')
             currentToken += 1
             multExp = self.multExp()
-            for i, element in enumerate(multExp):
-                negateExp.insert(i, element)
+            for element in (multExp):
+                negateExp.append(element)
         elif matchKey('division'):
             # print('division (/) key found')
             negateExp.append('/')
             currentToken += 1
             multExp = self.multExp()
-            for i, element in enumerate(multExp):
-                negateExp.insert(i, element)
+            for element in (multExp):
+                negateExp.append(element)
         # print('/exit <multExp>')
         return negateExp
 
@@ -341,16 +339,19 @@ class Program:
         # print('\\enter <constant>')
         if matchLit('string'):
             # print('string found: ', tokenList[currentToken][2])
-            return tokenList[currentToken][2]
+            token = tokenList[currentToken][2]
             currentToken += 1
+            return list(token)
         elif matchLit('integer'):
             # print('integer found: ', tokenList[currentToken][2])
-            return tokenList[currentToken][2]
+            token = tokenList[currentToken][2]
             currentToken += 1
+            return list(token)
         elif matchLit('printable'):
             # print('printable found: ', tokenList[currentToken][2])
-            return tokenList[currentToken][2]
+            token = tokenList[currentToken][2]
             currentToken += 1
+            return list(token)
         else:
-            sys.exit('UNEXPECTED ERROR 2')
+            sys.exit('Value cannot be parsed: ', tokenList[currentToken][2])
         # print('/exit <constant>')
