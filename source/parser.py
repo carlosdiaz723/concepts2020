@@ -79,7 +79,7 @@ class program:
         '''
         self.type = str()
         global currentToken
-        print('\\enter <statement>')
+        #print('\\enter <statement>')
         if matchKey('end'):
             self.type = "END"
             return {"type": self.type}
@@ -101,7 +101,7 @@ class program:
                     "expression": self.expression,
                     "statement": self.statement}
         elif matchKey('instantiation'):
-            print('LET key found')
+            self.type = "LET" 
             currentToken += 1
             assert matchLit(
                 'printable'), 'printable identifier expected, not found'
@@ -111,12 +111,12 @@ class program:
                 'assignment'), 'assignment operator expected, not found'
             print('ASSIGNMENT key (=) found')
             currentToken += 1
-            expression()
+            self.expression() = self.expression()
         elif matchKey('print'):
-            print('PRINT key found')
+            self.type = "PRINT"
             currentToken += 1
             if matchKey('pound'):
-                print('POUND key found')
+                self.type = "POUND"
                 currentToken += 1
                 assert matchLit('integer'), 'integer expected, not found'
                 print('Integer Line Number found: ',
@@ -125,11 +125,11 @@ class program:
                 assert matchKey('comma'), 'comma expected, not found'
                 print('COMMA key found')
                 currentToken += 1
-                expression()
+                self.expression() = self.expression()
             else:
-                expression()
+                self.expression() = self.expression()
         elif matchKey('remark'):
-            print('REM key found, enter Remark')
+            self.type = "REM"
             currentToken += 1
             remarkString = ""
             assert matchLit('printable'), 'printable expected, not found'
@@ -138,10 +138,13 @@ class program:
             while matchLit('printable') and not matchKey('newLine'):
                 remarkString += scanner.getToken(currentToken)[2] + " "
                 currentToken += 1
-            print("Remark found: ", remarkString)
+            #print("Remark found: ", remarkString)
         else:
-            expression()
-        print('/exit <statement>')
+            self.expression() = self.expression()
+        return {"type": self.type, 
+                "expression": self.expression,
+                "statement": self.statement}
+        #print('/exit <statement>')
 
     def expression(self):
         '''
@@ -150,16 +153,15 @@ class program:
                     | <And Exp>
         '''
         global currentToken
-        print('\\enter <expression>')
-        andExp()
+        #print('\\enter <expression>')
+        self.andExp() = self.andExp()
         currentToken += 1
         if matchKey('or'):
-            print('OR key found')
+            self.type = "OR"
             currentToken += 1
-            expression()
+            self.expression() = self.expression()
         else:
             currentToken -= 1
-        print('/exit <expression>')
 
     def andExp(self):
         '''
@@ -168,16 +170,20 @@ class program:
                     | <Not Exp>
         '''
         global currentToken
-        print('\\enter <andExp>')
-        notExp()
+        #print('\\enter <andExp>')
+        self.notExp() = self.notExp()
         currentToken += 1
         if matchKey('and'):
-            print('and key found')
+            self.type = "and"
             currentToken += 1
-            andExp()
+            self.andExp() = self.andExp()
         else:
             currentToken -= 1
-        print('/exit <andExp>')
+        return {
+            "type": self.type,
+            "expression": self.expression,
+            "statement": self.statement}
+        #print('/exit <andExp>')
 
     def notExp(self):
         '''
@@ -186,12 +192,15 @@ class program:
                     | <Compare Exp>
         '''
         global currentToken
-        print('\\enter <notExp>')
+        #print('\\enter <notExp>')
         if matchKey('negation'):
             print('boolean negation (not) key found')
             currentToken += 1
-        compareExp()
-        print('/exit <notExp>')
+        self.compareExp() = self.compareExp()
+        return {"type": self.type,
+                "expression": self.expression,
+                "statement": self.statement}
+        #print('/exit <notExp>')
 
     def compareExp(self):
         '''
@@ -200,8 +209,8 @@ class program:
                         | <Add Exp>
         '''
         global currentToken
-        print('\\enter <compareExp>')
-        addExp()
+        #print('\\enter <compareExp>')
+        self.addExp() = self.addExp()
         currentToken += 1
         if tokenList[currentToken - 1][4] in ['isEqualTo', 'greaterT', 'lessThan']:
             print('comparator found: ', tokenList[currentToken - 1][2])
@@ -336,4 +345,4 @@ class program:
         print('/exit <constant>')
 
 
-lines()
+program()
