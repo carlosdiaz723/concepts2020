@@ -39,7 +39,6 @@ IDENTIFIERS/LITERALS:
                 | IF '(' <Expression> ')' THEN <Statement>  
                 | LET Id '=' <Expression> 
                 | PRINT <Expression>
-                | PRINT '#' Integer ',' <Expression>
                 | REM Remark
                 | <Expression>
 
@@ -72,7 +71,6 @@ IDENTIFIERS/LITERALS:
                 | <Value> 
 
 <Value>       ::= '(' <Expression> ')'
-                | ID '(' <Expression> ')'
                 | <Constant> 
 
 <Constant> ::= Integer 

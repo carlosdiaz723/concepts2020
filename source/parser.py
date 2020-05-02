@@ -44,7 +44,7 @@ def matchLit(pattern: str):
                      tokenList[currentToken][2]) is not None
 
 
-class program:
+class Program:
     '''
     Starting point for the parser.
     BNF rule:
@@ -52,9 +52,10 @@ class program:
               | Integer <Statement> NewLine
     '''
 
+    statements = list()
+
     def lines(self):
         global currentToken
-        self.statements = list()
         assert matchLit('integer'), 'integer expected, instead found: '\
             + str(tokenList[currentToken][2])
         currentToken += 1
@@ -73,63 +74,51 @@ class program:
                     | IF <Expression> THEN <Statement>
                     | LET Id '=' <Expression>
                     | PRINT <Expression>
-                    | PRINT '#' Integer ',' <Expression>
                     | REM Remark
                     | <Expression>
         '''
         self.type = str()
         global currentToken
-        #print('\\enter <statement>')
+        # print('\\enter <statement>')
         if matchKey('end'):
-            self.type = "END"
-            return {"type": self.type}
+            kind = "END"
+            return tuple(kind)
         elif matchKey('if'):
-            self.type = "IF"
+            kind = "if"
             currentToken += 1
             assert matchKey(
                 'openParen'), 'open parenthesis expected, not found'
             currentToken += 1
-            self.expression = self.expression()
+            expression = self.expression()
             assert matchKey('closeParen'),\
                 'close parenthesis expected, instead found ' + \
                 tokenList[currentToken][2]
             currentToken += 1
             assert matchKey('then'), 'THEN expected, not found'
             currentToken += 1
-            self.statement = self.statement()
-            return {"type": self.type,
-                    "expression": self.expression,
-                    "statement": self.statement}
+            statement = self.statement()
+            return (kind, expression, statement)
         elif matchKey('instantiation'):
-            self.type = "LET" 
+            kind = "let"
             currentToken += 1
             assert matchLit(
                 'printable'), 'printable identifier expected, not found'
-            print('PRINTABLE/ID found: ', tokenList[currentToken][2])
+            # print('PRINTABLE/ID found: ', tokenList[currentToken][2])
+            ident = tokenList[currentToken][2]
             currentToken += 1
             assert matchKey(
                 'assignment'), 'assignment operator expected, not found'
-            print('ASSIGNMENT key (=) found')
+            # print('ASSIGNMENT key (=) found')
             currentToken += 1
-            self.expression() = self.expression()
+            expression = self.expression()
+            return (kind, ident, expression)
         elif matchKey('print'):
-            self.type = "PRINT"
+            kind = "PRINT"
             currentToken += 1
-            if matchKey('pound'):
-                self.type = "POUND"
-                currentToken += 1
-                assert matchLit('integer'), 'integer expected, not found'
-                print('Integer Line Number found: ',
-                      tokenList[currentToken][2])
-                currentToken += 1
-                assert matchKey('comma'), 'comma expected, not found'
-                print('COMMA key found')
-                currentToken += 1
-                self.expression() = self.expression()
-            else:
-                self.expression() = self.expression()
+            expression = self.expression()
+            return (kind, expression)
         elif matchKey('remark'):
-            self.type = "REM"
+            kind = "REM"
             currentToken += 1
             remarkString = ""
             assert matchLit('printable'), 'printable expected, not found'
@@ -138,13 +127,13 @@ class program:
             while matchLit('printable') and not matchKey('newLine'):
                 remarkString += scanner.getToken(currentToken)[2] + " "
                 currentToken += 1
-            #print("Remark found: ", remarkString)
+            # print("Remark found: ", remarkString)
+            return tuple(kind)
         else:
-            self.expression() = self.expression()
-        return {"type": self.type, 
-                "expression": self.expression,
-                "statement": self.statement}
-        #print('/exit <statement>')
+            kind = 'expression'
+            expression = self.expression()
+            return (kind, expression)
+        # print('/exit <statement>')
 
     def expression(self):
         '''
@@ -153,15 +142,18 @@ class program:
                     | <And Exp>
         '''
         global currentToken
-        #print('\\enter <expression>')
-        self.andExp() = self.andExp()
+        # print('\\enter <expression>')
+        expression = self.andExp()
         currentToken += 1
         if matchKey('or'):
-            self.type = "OR"
             currentToken += 1
-            self.expression() = self.expression()
+            secondExpression = self.expression()
+            secondExpression.insert(0, 'or')
+            for i, element in enumerate(secondExpression):
+                expression.insert(i, element)
         else:
             currentToken -= 1
+        return expression
 
     def andExp(self):
         '''
@@ -170,20 +162,19 @@ class program:
                     | <Not Exp>
         '''
         global currentToken
-        #print('\\enter <andExp>')
-        self.notExp() = self.notExp()
+        # print('\\enter <andExp>')
+        notExp = self.notExp()
         currentToken += 1
         if matchKey('and'):
-            self.type = "and"
             currentToken += 1
-            self.andExp() = self.andExp()
+            andExp = self.andExp()
+            andExp.insert(0, 'and')
+            for i, element in enumerate(andExp):
+                notExp.insert(i, element)
         else:
             currentToken -= 1
-        return {
-            "type": self.type,
-            "expression": self.expression,
-            "statement": self.statement}
-        #print('/exit <andExp>')
+        return notExp
+        # print('/exit <andExp>')
 
     def notExp(self):
         '''
@@ -192,15 +183,17 @@ class program:
                     | <Compare Exp>
         '''
         global currentToken
-        #print('\\enter <notExp>')
+        # print('\\enter <notExp>')
+        negation = False
         if matchKey('negation'):
-            print('boolean negation (not) key found')
+            # print('boolean negation (not) key found')
+            negation = True
             currentToken += 1
-        self.compareExp() = self.compareExp()
-        return {"type": self.type,
-                "expression": self.expression,
-                "statement": self.statement}
-        #print('/exit <notExp>')
+        compareExp = self.compareExp()
+        if negation:
+            compareExp.insert(0, 'not')
+        return compareExp
+        # print('/exit <notExp>')
 
     def compareExp(self):
         '''
@@ -209,18 +202,22 @@ class program:
                         | <Add Exp>
         '''
         global currentToken
-        #print('\\enter <compareExp>')
-        self.addExp() = self.addExp()
+        # print('\\enter <compareExp>')
+        addExp = self.addExp()
         currentToken += 1
-        if tokenList[currentToken - 1][4] in ['isEqualTo', 'greaterT', 'lessThan']:
-            print('comparator found: ', tokenList[currentToken - 1][2])
+        if tokenList[currentToken - 1][4] in ['isEqualTo', 'greaterT',
+                                              'lessThan']:
+            # print('comparator found: ', tokenList[currentToken - 1][2])
             currentToken -= 1
-            comparator()  # questionable
+            addExp.append(self.comparator())
             currentToken += 1
-            addExp()
+            secondAdd = self.addExp()
+            for i, element in enumerate(secondAdd):
+                addExp.insert(i, element)
         else:
             currentToken -= 1
-        print('/exit <compareExp>')
+        # print('/exit <compareExp>')
+        return addExp
 
     def comparator(self):
         '''
@@ -230,13 +227,13 @@ class program:
                     | '<'
         '''
         global currentToken
-        print('comparator identified: ', end='')
+        # print('comparator identified: ', end='')
         if matchKey('isEqualTo'):
-            print(' isEqualTo ')
+            return '=='
         elif matchKey('greaterT'):
-            print(' greaterT ')
-        elif matchKey(' lessThan '):
-            print(' lessThan ')
+            return '>'
+        elif matchKey('lessThan'):
+            return '<'
         else:
             sys.exit('UNEXPECTED ERROR 1')
 
@@ -248,17 +245,24 @@ class program:
                     | <Mult Exp>
         '''
         global currentToken
-        print('\\enter <addExp>')
-        multExp()
+        # print('\\enter <addExp>')
+        multExp = self.multExp()
         if matchKey('plus'):
-            print('plus (+) key found')
+            # print('plus (+) key found')
+            multExp.append('+')
             currentToken += 1
-            addExp()
+            secondMult = self.addExp()
+            for i, element in enumerate(secondMult):
+                multExp.insert(i, element)
         elif matchKey('minus'):
-            print('minus (-) key found')
+            # print('minus (-) key found')
+            multExp.append('-')
             currentToken += 1
-            addExp()
-        print('/exit <addExp>')
+            secondMult = self.addExp()
+            for i, element in enumerate(secondMult):
+                multExp.insert(i, element)
+        # print('/exit <addExp>')
+        return multExp
 
     def multExp(self):
         '''
@@ -268,17 +272,24 @@ class program:
                     | <Negate Exp>
         '''
         global currentToken
-        print('\\enter <multExp>')
-        negateExp()
+        # print('\\enter <multExp>')
+        negateExp = self.negateExp()
         if matchKey('multiplication'):
-            print('multiplication (*) key found')
+            # print('multiplication (*) key found')
+            negateExp.append('*')
             currentToken += 1
-            multExp()
+            multExp = self.multExp()
+            for i, element in enumerate(multExp):
+                negateExp.insert(i, element)
         elif matchKey('division'):
-            print('division (/) key found')
+            # print('division (/) key found')
+            negateExp.append('/')
             currentToken += 1
-            multExp()
-        print('/exit <multExp>')
+            multExp = self.multExp()
+            for i, element in enumerate(multExp):
+                negateExp.insert(i, element)
+        # print('/exit <multExp>')
+        return negateExp
 
     def negateExp(self):
         '''
@@ -287,41 +298,38 @@ class program:
                     | <Value>
         '''
         global currentToken
-        print('\\enter <negateExp>')
+        # print('\\enter <negateExp>')
+        negate = False
         if matchKey('minus'):
-            print('numerical negation (-) key found')
+            # print('numerical negation (-) key found')
+            negate = True
             currentToken += 1
-        value()
-        print('/exit <negateExp>')
+        value = self.value()
+        if negate:
+            value.insert(0, '-')
+        # print('/exit <negateExp>')
+        return value
 
     def value(self):
         '''
         BNF Rule:
         <Value> ::= '(' <Expression> ')'
-                | ID '(' <Expression> ')'
                 | <Constant>
         '''
         global currentToken
         if matchKey('openParen'):
-            print('open parenthesis found')
+            # print('open parenthesis found')
             currentToken += 1
-            expression()
+            expression = self.expression()
+            expression.insert(0, '(')
             assert matchKey(
                 'closeParen'), 'close parenthesis expected, not found'
-            print('close parenthesis found')
+            # print('close parenthesis found')
+            expression.append(')')
             currentToken += 1
-        elif matchLit('printable') and tokenList[currentToken + 1] == '(':
-            print('printable found: ', tokenList[currentToken][2])
-            currentToken += 1
-            assert matchKey(
-                'openParen'), 'close parenthesis expected, not found'
-            print('open parenthesis found')
-            currentToken += 1
-            expression()
-            assert matchKey(
-                'closeParen'), 'close parenthesis expected, not found'
+            return expression
         else:
-            constant()
+            return self.constant()
 
     def constant(self):
         '''
@@ -330,19 +338,19 @@ class program:
                     | String
         '''
         global currentToken
-        print('\\enter <constant>')
+        # print('\\enter <constant>')
         if matchLit('string'):
-            print('string found: ', tokenList[currentToken][2])
+            # print('string found: ', tokenList[currentToken][2])
+            return tokenList[currentToken][2]
             currentToken += 1
         elif matchLit('integer'):
-            print('integer found: ', tokenList[currentToken][2])
+            # print('integer found: ', tokenList[currentToken][2])
+            return tokenList[currentToken][2]
             currentToken += 1
         elif matchLit('printable'):
-            print('printable found: ', tokenList[currentToken][2])
+            # print('printable found: ', tokenList[currentToken][2])
+            return tokenList[currentToken][2]
             currentToken += 1
         else:
             sys.exit('UNEXPECTED ERROR 2')
-        print('/exit <constant>')
-
-
-program()
+        # print('/exit <constant>')

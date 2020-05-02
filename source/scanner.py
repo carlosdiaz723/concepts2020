@@ -16,7 +16,7 @@ Course Project
 
 
 File Description:
-This is where the source .bas file is scanned and tokenized. 
+This is where the source .bas file is scanned and tokenized.
 
 Note: All python files are pep8/pycodestyle compliant.
 '''
