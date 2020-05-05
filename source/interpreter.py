@@ -16,8 +16,8 @@ FINAL Deliverable: Full Interpreter
 
 
 File Description:
-THIS IS THE ONLY FILE THAT SHOULD BE RAN.
-It should be ran from the 'source' directory.
+**THIS IS THE ONLY FILE THAT SHOULD BE RAN.**
+**It should be ran from the 'source' directory.**
 
 Note: All python files are pep8/pycodestyle compliant.
 '''
